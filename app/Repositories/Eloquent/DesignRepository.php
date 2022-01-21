@@ -6,17 +6,17 @@ use App\Repositories\Contracts\IDesign;
 use App\Repositories\Eloquent\BaseRepository;
 
 // class DesignRepository extends BaseRepository implements IDesign
-class DesignRepository implements IDesign
+class DesignRepository extends BaseRepository implements IDesign
 {
 
-    public function all() {
-        return Design::all();
-    }
-    
-    // public function model()
-    // {
-    //     return Design::class; 
+    // public function all() {
+    //     return Design::all();
     // }
+    
+    public function model()
+    {
+        return Design::class; 
+    }
 
 
     // public function applyTags($id, array $data)

@@ -6,15 +6,16 @@ use App\Repositories\Contracts\IUser;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 
 // class UserRepository extends BaseRepository implements IUser
-class UserRepository implements IUser
+class UserRepository extends BaseRepository implements IUser
 {
-    public function all() {
-        return User::all();
-    }
-    // public function model()
-    // {
-    //     return User::class; 
+    // public function all() {
+    //     return User::all();
     // }
+    
+    public function model()
+    {
+        return User::class; 
+    }
 
     // public function findByEmail($email)
     // {
