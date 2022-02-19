@@ -10,6 +10,9 @@ use Illuminate\Support\Str;
 use App\Http\Resources\DesignResource;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Contracts\IDesign;
+use App\Repositories\Eloquent\Criteria\ForUser;
+use App\Repositories\Eloquent\Criteria\IsLive;
+use App\Repositories\Eloquent\Criteria\LatestFirst;
 
 class DesignController extends Controller
 {
@@ -22,16 +25,25 @@ class DesignController extends Controller
 
     public function index() {
         // $designs = Design::all();
-        $designs = $this->designs->all();
+        $designs = $this->designs->withCriteria([
+            new LatestFirst(),
+            new IsLive(),
+            new ForUser(1),
+        ])->all();
         return DesignResource::collection($designs);
+    }
+
+    public function findDesign($id) {
+        $design = $this->designs->find($id);
+
+        return new DesignResource($design);
     }
 
     public function update(Request $request, $id)
     {
+        // $design = Design::find($id);
 
-        $design = Design::find($id);
-
-        // $design = $this->designs->find($id);
+        $design = $this->designs->find($id);
 
         $this->authorize('update', $design);
 
@@ -45,37 +57,26 @@ class DesignController extends Controller
 
         // $design = Design::find($id);
 
-        $design->update([
+        $design = $this->designs->update($id, [
+            // 'team_id' => $request->team,
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title), 
             'is_live' => ! $design->upload_successful ? false : $request->is_live
         ]);
 
-        $design->retag($request->tags);
+        // $design->retag($request->tags);
+        // apply the tags
+        $this->designs->applyTags($id, $request->tags);
 
         // return response()->json($design, 200);
         return new DesignResource($design);
-        
-
-        // $design = $this->designs->update($id, [
-        //     'team_id' => $request->team,
-        //     'title' => $request->title,
-        //     'description' => $request->description,
-        //     'slug' => Str::slug($request->title), 
-        //     'is_live' => ! $design->upload_successful ? false : $request->is_live
-        // ]);
-
-        // apply the tags
-        // $this->designs->applyTags($id, $request->tags);
-        
-        // return new DesignResource($design);
     }
 
     public function destroy($id)
     {
-        // $design = $this->designs->find($id);
-        $design = Design::findOrFail($id);
+        $design = $this->designs->find($id);
+        // $design = Design::findOrFail($id);
 
         $this->authorize('delete', $design);
 
@@ -87,7 +88,7 @@ class DesignController extends Controller
                 Storage::disk($design->disk)->delete("uploads/designs/{$size}/".$design->image);
             }
         }
-        $design->delete();
+        $this->designs->delete();
         
         // $this->designs->delete($id);
         

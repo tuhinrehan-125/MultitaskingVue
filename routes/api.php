@@ -9,6 +9,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Designs\UploadController;
 use App\Http\Controllers\Designs\DesignController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\CommentController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -17,7 +18,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 // designs
 Route::get('designs', [DesignController::class, 'index']);
-// Route::get('designs/{id}', 'Designs\DesignController@findDesign');
+Route::get('designs/{id}', [DesignController::class, 'findDesign']);
 // Route::get('designs/slug/{slug}', 'Designs\DesignController@findBySlug');
 
 
@@ -56,4 +57,36 @@ Route::group(['middleware' => ['auth:api']], function(){
     // Route::get('designs/{id}/byUser', 'Designs\DesignController@userOwnsDesign');
     
     Route::delete('designs/{id}', [DesignController::class, 'destroy']);
+
+
+	// Likes and Unlikes
+    // Route::post('designs/{id}/like', 'Designs\DesignController@like');
+    // Route::get('designs/{id}/liked', 'Designs\DesignController@checkIfUserHasLiked');
+
+    // Comments
+    Route::post('designs/{id}/comments', [CommentController::class, 'store']);
+    // Route::put('comments/{id}', 'Designs\CommentController@update');
+    // Route::delete('comments/{id}', 'Designs\CommentController@destroy');
+
+    // Teams
+    // Route::post('teams', 'Teams\TeamsController@store');
+    // Route::get('teams/{id}', 'Teams\TeamsController@findById');
+    // Route::get('teams', 'Teams\TeamsController@index');
+    // Route::get('users/teams', 'Teams\TeamsController@fetchUserTeams');
+    // Route::put('teams/{id}', 'Teams\TeamsController@update');
+    // Route::delete('teams/{id}', 'Teams\TeamsController@destroy');
+    // Route::delete('teams/{team_id}/users/{user_id}', 'Teams\TeamsController@removeFromTeam');
+    
+    // Invitations
+    // Route::post('invitations/{teamId}', 'Teams\InvitationsController@invite');
+    // Route::post('invitations/{id}/resend', 'Teams\InvitationsController@resend');
+    // Route::post('invitations/{id}/respond', 'Teams\InvitationsController@respond');
+    // Route::delete('invitations/{id}', 'Teams\InvitationsController@destroy');
+
+    // Chats
+    // Route::post('chats', 'Chats\ChatController@sendMessage');
+    // Route::get('chats', 'Chats\ChatController@getUserChats');
+    // Route::get('chats/{id}/messages', 'Chats\ChatController@getChatMessages');
+    // Route::put('chats/{id}/markAsRead', 'Chats\ChatController@markAsRead');
+    // Route::delete('messages/{id}', 'Chats\ChatController@destroyMessage');
 });
