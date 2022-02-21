@@ -65,6 +65,56 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Comment::class);
     }
+
+
+    // teams that the user belongs to
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class)
+            ->withTimestamps();
+    }
+
+    public function ownedTeams()
+    {
+        return $this->teams()
+            ->where('owner_id', $this->id);
+    }
+
+    public function isOwnerOfTeam($team)
+    {
+        return (bool)$this->teams()
+                        ->where('id', $team->id)
+                        ->where('owner_id', $this->id)
+                        ->count();
+    }
+
+
+    // Relationships for invitations
+    // public function invitations()
+    // {
+    //     return $this->hasMany(Invitation::class, 'recipient_email', 'email');
+    // }
+
+    // relationships for chat messaging
+    // public function chats()
+    // {
+    //     return $this->belongsToMany(Chat::class, 'participants');
+    // }
+
+    // public function messages()
+    // {
+    //     return $this->hasMany(Message::class);
+    // }
+
+    // public function getChatWithUser($user_id)
+    // {
+    //     $chat = $this->chats()
+    //                 ->whereHas('participants', function($query)  use ($user_id){
+    //                     $query->where('user_id', $user_id);
+    //                 })
+    //                 ->first();
+    //     return $chat;
+    // }
     
 
     public function getJWTIdentifier()

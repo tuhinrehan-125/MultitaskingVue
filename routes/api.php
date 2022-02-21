@@ -10,6 +10,7 @@ use App\Http\Controllers\Designs\UploadController;
 use App\Http\Controllers\Designs\DesignController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Teams\TeamController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,6 +27,14 @@ Route::get('designs/{id}', [DesignController::class, 'findDesign']);
 Route::get('users', [UserController::class, 'index']);
 // Route::get('user/{username}', 'User\UserController@findByUsername');
 // Route::get('users/{id}/designs', 'Designs\DesignController@getForUser');
+
+// Team
+Route::get('teams/slug/{slug}', [TeamController::class, 'findBySlug']);
+// Route::get('teams/{id}/designs', 'Designs\DesignController@getForTeam');
+
+// Search Designs
+// Route::get('search/designs', 'Designs\DesignController@search');
+// Route::get('search/designers', 'User\UserController@search');
 
 Route::group(['prefix' => 'topics'], function(){
     Route::get('/', [TopicController::class, 'index']);
@@ -69,12 +78,13 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::delete('comments/{id}', [CommentController::class, 'destroy']);
 
     // Teams
-    // Route::post('teams', 'Teams\TeamsController@store');
-    // Route::get('teams/{id}', 'Teams\TeamsController@findById');
-    // Route::get('teams', 'Teams\TeamsController@index');
-    // Route::get('users/teams', 'Teams\TeamsController@fetchUserTeams');
-    // Route::put('teams/{id}', 'Teams\TeamsController@update');
-    // Route::delete('teams/{id}', 'Teams\TeamsController@destroy');
+    Route::post('teams', [TeamController::class, 'store']);
+    Route::get('teams/{id}', [TeamController::class, 'findById']);
+
+    Route::get('teams', [TeamController::class, 'index']);
+    Route::get('users/teams', [TeamController::class, 'fetchUserTeams']);
+    Route::put('teams/{id}', [TeamController::class, 'update']);
+    Route::delete('teams/{id}', [TeamController::class, 'destroy']);
     // Route::delete('teams/{team_id}/users/{user_id}', 'Teams\TeamsController@removeFromTeam');
     
     // Invitations
