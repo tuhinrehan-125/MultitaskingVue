@@ -15,9 +15,8 @@ class CreateLikesTable extends Migration
     {
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('likeable_id')->unsigned();
-            $table->string('likeable_type');
-            $table->unsignedBigInteger('user_id')->unsigned()->index();
+            $table->bigInteger('user_id')->unsigned()->index();
+            $table->morphs('likeable');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

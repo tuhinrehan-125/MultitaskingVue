@@ -60,13 +60,13 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
 	// Likes and Unlikes
-    // Route::post('designs/{id}/like', 'Designs\DesignController@like');
-    // Route::get('designs/{id}/liked', 'Designs\DesignController@checkIfUserHasLiked');
+    Route::post('designs/{id}/like', [DesignController::class, 'like']);
+    Route::get('designs/{id}/liked', [DesignController::class, 'checkIfUserHasLiked']);
 
     // Comments
     Route::post('designs/{id}/comments', [CommentController::class, 'store']);
-    // Route::put('comments/{id}', 'Designs\CommentController@update');
-    // Route::delete('comments/{id}', 'Designs\CommentController@destroy');
+    Route::put('comments/{id}', [CommentController::class, 'update']);
+    Route::delete('comments/{id}', [CommentController::class, 'destroy']);
 
     // Teams
     // Route::post('teams', 'Teams\TeamsController@store');

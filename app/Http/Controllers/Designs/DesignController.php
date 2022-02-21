@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Designs;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Models\Design;
 use Illuminate\Support\Str;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
-use Illuminate\Support\Facades\Storage;
 use App\Repositories\Contracts\IDesign;
-use App\Repositories\Eloquent\Criteria\ForUser;
-use App\Repositories\Eloquent\Criteria\IsLive;
-use App\Repositories\Eloquent\Criteria\LatestFirst;
+use Illuminate\Support\Facades\Storage;
+use App\Repositories\Eloquent\Criteria\{
+    IsLive,
+    LatestFirst,
+    ForUser,
+    EagerLoad
+};
 
 class DesignController extends Controller
 {
@@ -29,6 +32,7 @@ class DesignController extends Controller
             new LatestFirst(),
             new IsLive(),
             new ForUser(1),
+            new EagerLoad(['user', 'comments'])
         ])->all();
         return DesignResource::collection($designs);
     }
@@ -80,7 +84,6 @@ class DesignController extends Controller
 
         $this->authorize('delete', $design);
 
-        
         // delete the files associated to the record
         foreach(['thumbnail', 'large', 'original'] as $size){
             // check if the file exists in the database
@@ -88,11 +91,66 @@ class DesignController extends Controller
                 Storage::disk($design->disk)->delete("uploads/designs/{$size}/".$design->image);
             }
         }
-        $this->designs->delete();
+        // $this->designs->delete();
         
-        // $this->designs->delete($id);
+        $this->designs->delete($id);
         
         return response()->json(['message' => 'Record deleted'], 200);
-
     }
+
+
+    public function like($id)
+    {
+        $total = $this->designs->like($id);
+        return response()->json([
+            'message' => 'Successful',
+            'total' => $total
+        ], 200);
+    }
+
+    public function checkIfUserHasLiked($designId)
+    {
+        $isLiked = $this->designs->isLikedByUser($designId);
+        return response()->json(['liked' => $isLiked], 200);
+    }
+
+    // public function search(Request $request)
+    // {
+    //     $designs = $this->designs->search($request);
+    //     return DesignResource::collection($designs);
+    // }
+
+    // public function findBySlug($slug)
+    // {
+    //     $design = $this->designs->withCriteria([
+    //             new IsLive(), 
+    //             new EagerLoad(['user', 'comments'])
+    //         ])->findWhereFirst('slug', $slug);
+    //     return new DesignResource($design);
+    // }
+
+    // public function getForTeam($teamId)
+    // {
+    //     $designs = $this->designs
+    //                     ->withCriteria([new IsLive()])
+    //                     ->findWhere('team_id', $teamId);
+    //     return DesignResource::collection($designs);
+    // }
+
+    // public function getForUser($userId)
+    // {
+    //     $designs = $this->designs
+    //                     //->withCriteria([new IsLive()])
+    //                     ->findWhere('user_id', $userId);
+    //     return DesignResource::collection($designs);
+    // }
+
+    // public function userOwnsDesign($id)
+    // {
+    //     $design = $this->designs->withCriteria(
+    //         [ new ForUser(auth()->id())]
+    //     )->findWhereFirst('id', $id);
+
+    //     return new DesignResource($design);
+    // }
 }

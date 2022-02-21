@@ -39,23 +39,25 @@ class DesignRepository extends BaseRepository implements IDesign
         return $comment;
     }
 
-    // public function like($id)
-    // {
-    //     $design = $this->model->findOrFail($id);
-    //     if($design->isLikedByUser(auth()->id())){
-    //         $design->unlike();
-    //     } else {
-    //         $design->like();
-    //     }
+    public function like($id)
+    {
+        $design = $this->model->findOrFail($id);
+        //trait call isLikedByUser
+        if($design->isLikedByUser(auth()->id())){
+            $design->unlike();
+        } else {
+            $design->like();
+        }
 
-    //     return $design->likes()->count();
-    // }
+        return $design->likes()->count();
+    }
 
-    // public function isLikedByUser($id)
-    // {
-    //     $design = $this->model->findOrFail($id);
-    //     return $design->isLikedByUser(auth()->id());
-    // }
+    public function isLikedByUser($id)
+    {
+        $design = $this->model->findOrFail($id);
+        //trait call isLikedByUser
+        return $design->isLikedByUser(auth()->id());
+    }
 
     // public function search(Request $request)
     // {
