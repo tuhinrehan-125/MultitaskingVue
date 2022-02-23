@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Team;
+use App\Models\Message;
+use App\Models\Invitation;
 use App\Models\Design;
+
+use App\Policies\TeamPolicy;
 use App\Policies\DesignPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -19,6 +24,9 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\Topic' => 'App\Policies\TopicPolicy',
         'App\Models\Post' => 'App\Policies\PostPolicy',
         Design::class => DesignPolicy::class,
+        Team::class => TeamPolicy::class,
+        // Invitation::class => InvitationPolicy::class,
+        // Message::class => MessagePolicy::class
     ];
 
     /**

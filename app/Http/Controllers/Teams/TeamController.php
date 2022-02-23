@@ -36,6 +36,7 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
+        
         $this->validate($request, [
             'name' => ['required', 'string', 'max:80', 'unique:teams,name']
         ]);
@@ -58,19 +59,19 @@ class TeamController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // $team = $this->teams->find($id);
-        // $this->authorize('update', $team);
+        $team = $this->teams->find($id);
+        $this->authorize('update', $team);
 
-        // $this->validate($request, [
-        //     'name' => ['required', 'string', 'max:80', 'unique:teams,name,'.$id]
-        // ]);
+        $this->validate($request, [
+            'name' => ['required', 'string', 'max:80', 'unique:teams,name,'.$id]
+        ]);
 
-        // $team = $this->teams->update($id, [
-        //     'name' => $request->name,
-        //     'slug' => Str::slug($request->name)
-        // ]);
+        $team = $this->teams->update($id, [
+            'name' => $request->name,
+            'slug' => Str::slug($request->name)
+        ]);
 
-        // return new TeamResource($team);
+        return new TeamResource($team);
     }
 
     /**
@@ -78,8 +79,8 @@ class TeamController extends Controller
      */
     public function findById($id)
     {
-        // $team = $this->teams->find($id);
-        // return new TeamResource($team);
+        $team = $this->teams->find($id);
+        return new TeamResource($team);
     }
 
     /**
@@ -87,8 +88,8 @@ class TeamController extends Controller
      */
     public function fetchUserTeams()
     {
-        // $teams = $this->teams->fetchUserTeams();
-        // return TeamResource::collection($teams);
+        $teams = $this->teams->fetchUserTeams();
+        return TeamResource::collection($teams);
     }
 
     /**

@@ -90,10 +90,10 @@ class User extends Authenticatable implements JWTSubject
 
 
     // Relationships for invitations
-    // public function invitations()
-    // {
-    //     return $this->hasMany(Invitation::class, 'recipient_email', 'email');
-    // }
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class, 'recipient_email', 'email');
+    }
 
     // relationships for chat messaging
     // public function chats()

@@ -14,13 +14,6 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        //return parent::toArray($request);
-        // return [
-        //     'id' => $this->id,
-        //     'name' => $this->name,
-        //     'email' => $this->email,
-        //     'created_at' => $this->created_at,
-        // ];
         return [
             'id' => $this->id,
             'username' => $this->username,
@@ -30,10 +23,10 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'name' => $this->name,
             'photo_url' => $this->photo_url,
-            'designs' => $this->designs,
-            // 'designs' => DesignResource::collection(
-            //     $this->whenLoaded('designs')
-            // ),
+            // 'designs' => $this->designs,
+            'designs' => DesignResource::collection(
+                $this->whenLoaded('designs')
+            ),
             'create_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
                 'created_at' => $this->created_at

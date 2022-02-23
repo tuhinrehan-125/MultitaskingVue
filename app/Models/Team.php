@@ -15,6 +15,9 @@ class Team extends Model
         'slug'
     ];
 
+    // public $timestamps = false;
+
+    // It's like an observer
     protected static function boot() {
         parent::boot();
 
@@ -50,10 +53,10 @@ class Team extends Model
 
 
 
-    // public function invitations()
-    // {
-    //     return $this->hasMany(Invitation::class);
-    // }
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
 
     // public function hasPendingInvite($email)
     // {
