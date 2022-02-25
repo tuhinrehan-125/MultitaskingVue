@@ -11,6 +11,7 @@ use App\Http\Controllers\Designs\DesignController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Teams\TeamController;
+use App\Http\Controllers\Teams\InvitationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -88,10 +89,10 @@ Route::group(['middleware' => ['auth:api']], function(){
     // Route::delete('teams/{team_id}/users/{user_id}', 'Teams\TeamsController@removeFromTeam');
     
     // Invitations
-    // Route::post('invitations/{teamId}', 'Teams\InvitationsController@invite');
-    // Route::post('invitations/{id}/resend', 'Teams\InvitationsController@resend');
-    // Route::post('invitations/{id}/respond', 'Teams\InvitationsController@respond');
-    // Route::delete('invitations/{id}', 'Teams\InvitationsController@destroy');
+    Route::post('invitations/{teamId}', [InvitationController::class, 'invite']);
+    Route::post('invitations/{id}/resend', [InvitationController::class, 'resend']);
+    Route::post('invitations/{id}/respond', [InvitationController::class, 'respond']);
+    Route::delete('invitations/{id}', [InvitationController::class, 'destroy']);
 
     // Chats
     // Route::post('chats', 'Chats\ChatController@sendMessage');

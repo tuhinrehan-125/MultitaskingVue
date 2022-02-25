@@ -8,6 +8,6 @@ interface IUser
 {
     // public function all();
     
-    // public function findByEmail($email);
+    public function findByEmail($email);
     // public function search(Request $request);
 }
