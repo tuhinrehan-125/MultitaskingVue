@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Teams;
 
+use App\Models\Team;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Repositories\Contracts\IInvitation;
+use Illuminate\Support\Facades\Mail;
 use App\Repositories\Contracts\ITeam;
 use App\Repositories\Contracts\IUser;
-use Illuminate\Http\Request;
+use App\Mail\SendInvitationToJoinTeam;
+use App\Repositories\Contracts\IInvitation;
 
 class InvitationController extends Controller
 {
@@ -50,7 +53,7 @@ class InvitationController extends Controller
         // get the recipient by email
         $recipient = $this->users->findByEmail($request->email);
 
-        // if the recipient does not exist, send invitation to join the team
+        // [user doesn't exist] if the recipient does not exist, send invitation to join the team
         if(! $recipient){
             $this->createInvitation(false, $team, $request->email);
             
@@ -59,7 +62,7 @@ class InvitationController extends Controller
             ], 200);
         }
 
-        // check if the team already has the user
+        // [user does exist] check if the team already has the user 
         if($team->hasUser($recipient)){
             return response()->json([
                 'email' => 'This user seems to be a team member already'
@@ -73,20 +76,20 @@ class InvitationController extends Controller
         ], 200);
     }
 
-    // public function resend($id)
-    // {
-    //     $invitation = $this->invitations->find($id);
+    public function resend($id)
+    {
+        $invitation = $this->invitations->find($id);
 
-    //     $this->authorize('resend', $invitation);
+        // $this->authorize('resend', $invitation);
         
-    //     $recipient = $this->users
-    //                     ->findByEmail($invitation->recipient_email);
+        $recipient = $this->users
+                        ->findByEmail($invitation->recipient_email);
         
-    //     Mail::to($invitation->recipient_email)
-    //         ->send(new SendInvitationToJoinTeam($invitation, !is_null($recipient)));
+        Mail::to($invitation->recipient_email)
+            ->send(new SendInvitationToJoinTeam($invitation, !is_null($recipient)));
 
-    //     return response()->json(['message' => 'Invitation resent'], 200);
-    // }
+        return response()->json(['message' => 'Invitation resent'], 200);
+    }
 
     // public function respond(Request $request, $id)
     // {
@@ -131,18 +134,19 @@ class InvitationController extends Controller
     //     return response()->json(['message' => 'Deleted'], 200);
     // }
 
-    // protected function createInvitation(bool $user_exists, Team $team, string $email)
-    // {
+    protected function createInvitation(bool $user_exists, Team $team, string $email)
+    {
+        $invitation = $this->invitations->create([
+            'team_id' => $team->id,
+            'sender_id' => auth()->id(),
+            'recipient_email' => $email,
+            'token' => md5(uniqid(microtime()))
 
-    //     $invitation = $this->invitations->create([
-    //         'team_id' => $team->id,
-    //         'sender_id' => auth()->id(),
-    //         'recipient_email' => $email,
-    //         'token' => md5(uniqid(microtime()))
-    //     ]);
+            // 'sender_id' => $user->id,
+            // 'recipient_email' => $request->email,
+        ]);
 
-    //     Mail::to($email)
-    //         ->send(new SendInvitationToJoinTeam($invitation, $user_exists));
-    
-    // }
+        Mail::to($email)
+            ->send(new SendInvitationToJoinTeam($invitation, $user_exists));
+    }
 }

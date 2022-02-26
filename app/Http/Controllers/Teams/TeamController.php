@@ -13,14 +13,14 @@ use App\Repositories\Contracts\IInvitation;
 class TeamController extends Controller
 {
     protected $teams;
-    // protected $users;
-    // protected $invitations;
+    protected $users;
+    protected $invitations;
 
-    public function __construct(ITeam $teams)
+    public function __construct(ITeam $teams, IUser $users, IInvitation $invitations)
     {
         $this->teams = $teams;
-        // $this->users = $users;
-        // $this->invitations = $invitations;
+        $this->users = $users;
+        $this->invitations = $invitations;
     }
 
     /**
@@ -114,32 +114,32 @@ class TeamController extends Controller
         return response()->json(['message' => 'Deleted'], 200);
     }
 
-    // public function removeFromTeam($teamId, $userId)
-    // {
-    //     // get the team
-    //     $team = $this->teams->find($teamId);
-    //     $user = $this->users->find($userId);
+    public function removeFromTeam($teamId, $userId)
+    {
+        // get the team
+        $team = $this->teams->find($teamId);
+        $user = $this->users->find($userId);
 
-    //     // check that the user is not the owner
-    //     if($user->isOwnerOfTeam($team)){
-    //         return response()->json([
-    //             'message' => 'You are the team owner'
-    //         ], 401);
-    //     }
+        // check that the user is not the owner
+        if($user->isOwnerOfTeam($team)){
+            return response()->json([
+                'message' => 'You are the team owner'
+            ], 401);
+        }
 
-    //     // check that the person sending the request
-    //     // is either the owner of the team or the person
-    //     // who wants to leave the team
-    //     if(!auth()->user()->isOwnerOfTeam($team) && 
-    //         auth()->id() !== $user->id
-    //     ){
-    //         return response()->json([
-    //             'message' => 'You cannot do this'
-    //         ], 401);
-    //     }
+        // check that the person sending the request
+        // is either the owner of the team or the person
+        // who wants to leave the team
+        if(!auth()->user()->isOwnerOfTeam($team) && 
+            auth()->id() !== $user->id
+        ){
+            return response()->json([
+                'message' => 'You cannot do this'
+            ], 401);
+        }
 
-    //     $this->invitations->removeUserFromTeam($team, $userId);
+        $this->invitations->removeUserFromTeam($team, $userId);
 
-    //     return response()->json(['message' => 'Success'], 200);
-    // }
+        return response()->json(['message' => 'Success'], 200);
+    }
 }
